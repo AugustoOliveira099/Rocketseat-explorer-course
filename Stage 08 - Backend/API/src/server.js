@@ -2,14 +2,22 @@ require("express-async-errors");
 
 const migrationsRun = require("./database/sqlite/migrations");
 const AppError = require("./utils/AppError");
-const express = require("express");
+const uploadConfig = require("./configs/upload");
 
+const cors = require("cors");
+const express = require("express");
 const routes = require("./routes");
 
 migrationsRun();
 
 const app = express();
+
+app.use(cors()); // Permite que o back-end atenda às requisições do front-end
 app.use(express.json());
+
+// Mostra arquivos estáticos,
+// neste caso está mostrando as fotos presentes no DB
+app.use("/files", express.static(uploadConfig.UPLOADS_FOLDER));
 
 app.use(routes);
 
